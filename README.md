@@ -1,138 +1,184 @@
 # Twitter-Sentiment-Analysis
-🚀 What this project does
 
-Loads the Sentiment140 dataset (1.6M tweets).
+A complete end-to-end Machine Learning project that performs **sentiment analysis on tweets** using the **Sentiment140 dataset**, applying **text preprocessing**, **TF-IDF vectorization**, and **Logistic Regression** for classification.
 
-Cleans & preprocesses tweets (placeholder clean_text available for customization).
+This README explains the project architecture, workflow, setup instructions, model pipeline, results, and how to run predictions.
 
-Converts text to TF-IDF features (unigrams + bigrams).
 
-Trains a Logistic Regression model for binary sentiment classification (negative / positive).
+##  Project Overview
 
-Evaluates model with accuracy, precision/recall/F1, and confusion matrix.
+This project analyzes the sentiment (Positive / Negative) of tweets using classical machine learning techniques.
 
-Saves the trained model and vectorizer for inference (pickle).
+### **Key Features**
 
-Demonstrates loading saved artifacts and predicting on new samples.
+* Downloads the **Sentiment140** dataset via Kaggle API
+* Cleans and preprocesses tweets
+* Converts text into numerical features using **TF-IDF** (unigrams + bigrams)
+* Trains a **Logistic Regression** model
+* Evaluates accuracy, precision, recall, F1-score, and confusion matrix
+* Saves & loads the trained model with **pickle**
+* Predicts sentiment for any new tweet
 
-🌟 Features
+---
 
-Simple, reproducible pipeline (notebook-based).
+##  Project Architecture
 
-Efficient TF-IDF + Logistic Regression baseline.
-
-Model & vectorizer saving/loading for quick deployment.
-
-Clear architecture diagram and step-by-step explanations included.
-
-🧭 Project architecture (high level)
+```mermaid
 flowchart LR
-    A[Download dataset (Kaggle)] --> B[Extract CSV]
-    B --> C[Data Cleaning & Preprocessing]
-    C --> D[Tokenization & TF-IDF Vectorization]
-    D --> E[Model Training (Logistic Regression)]
-    E --> F[Model Evaluation & Save]
-    F --> G[Load Model & Predict (Inference)]
+    A[Load Sentiment140 Dataset] --> B[Preprocessing & Cleaning]
+    B --> C[TF-IDF Vectorization]
+    C --> D[Model Training (Logistic Regression)]
+    D --> E[Evaluation]
+    E --> F[Save Model & Vectorizer]
+    F --> G[Prediction on New Tweets]
+```
 
-📂 Repository structure (typical)
+---
 
-Twitter_Sentiment_Analysis.ipynb — main notebook (full pipeline + explanations)
+##  Project Structure
 
-kaggle.json — Kaggle credential (used for automated download)
+```
+Twitter-Sentiment-Analysis/
+│── Twitter_Sentiment_Analysis.ipynb   # Main notebook
+│── kaggle.json                        # Kaggle API key
+│── sentiment_model.pkl                # Saved ML model
+│── vectorizer.pkl                     # Saved TF-IDF vectorizer
+│── README.md                          # Project documentation
+│── sentiment140.zip                   # Dataset (after Kaggle download)
+└── training.1600000.processed.noemoticon.csv
+```
 
-sentiment_model.pkl — serialized trained model (if produced)
+---
 
-vectorizer.pkl — serialized TF-IDF vectorizer (if produced)
+##  Tech Stack
 
-README.md — this file
+* **Python 3**
+* **Pandas, NumPy** — data handling
+* **Scikit-learn** — ML model & TF-IDF
+* **Zipfile** — dataset extraction
+* **Pickle** — model persistence
+* **Kaggle API** — dataset download
 
-requirements.txt — (optional) Python dependencies
+---
 
-Note: The full repo archive you uploaded is available at /mnt/data/Twitter-Sentiment-Analysis-main.zip.
+##  Installation & Setup
 
-🛠️ Setup & Requirements
+### **1. Install Dependencies**
 
-Python 3.8+ recommended.
+```bash
+pip install pandas numpy scikit-learn kaggle
+```
 
-Install dependencies (example):
+### **2. Add Kaggle Credentials**
 
-pip install -r requirements.txt
-# or minimal set:
-pip install pandas scikit-learn matplotlib kaggle
+Place your `kaggle.json` file in:
 
+```bash
+~/.kaggle/kaggle.json
+chmod 600 ~/.kaggle/kaggle.json
+```
 
-If you want to download the Sentiment140 via Kaggle:
+### **3. Download the Dataset**
 
-Put your Kaggle API token file at ~/.kaggle/kaggle.json or copy kaggle.json into the project folder.
-
-Run the Kaggle CLI command in the notebook or terminal:
-
+```bash
 kaggle datasets download -d kazanova/sentiment140
 unzip sentiment140.zip
+```
 
-🧪 Quickstart — Notebook (Colab / Local)
+### **4. Run the Jupyter Notebook**
 
-Open Twitter_Sentiment_Analysis.ipynb in Jupyter or Colab.
+```bash
+jupyter notebook Twitter_Sentiment_Analysis.ipynb
+```
 
-Ensure kaggle.json is present (or upload the dataset manually).
+---
 
-Run cells sequentially:
+##  Preprocessing Steps
 
-Data extract & load
+Each tweet undergoes:
 
-Preprocessing (clean_text — implement improvements here)
+* Lowercasing
+* Removing URLs
+* Removing mentions (@usernames)
+* Removing special characters & numbers
+* Optional stopword removal or stemming
 
-Train/Test split → TF-IDF vectorize → train model
+A new column `clean_text` stores the cleaned version.
 
-Evaluate → save vectorizer.pkl & sentiment_model.pkl
+---
 
-Use saved artifacts for inference.
+##  Feature Extraction — TF-IDF
 
-Command-line hint (if converted to script):
+The project uses:
 
-python train.py       # trains and saves model
-python predict.py     # loads saved model & predicts on sample tweets
+* **max_features = 20,000**
+* **ngram_range = (1, 2)** (unigrams + bigrams)
 
-💡 Usage example (in Python)
-import pickle
+TF-IDF converts tweets into sparse numerical vectors that work well with linear models.
 
-# load artifacts
-with open('vectorizer.pkl','rb') as f:
-    vect = pickle.load(f)
-with open('sentiment_model.pkl','rb') as f:
-    model = pickle.load(f)
+---
 
-samples = ["I love this phone!", "This product is terrible."]
-X = vect.transform(samples)
-preds = model.predict(X)
+## Model Used
 
-for s, p in zip(samples, preds):
-    print(s, "->", "Positive" if p==1 else "Negative")
+### **Logistic Regression**
 
-✅ Evaluation & Expected Results
+Chosen because:
 
-The notebook prints:
+* Works well for high-dimensional sparse text
+* Fast training & inference
+* Interpretable
+* Reliable baseline for NLP tasks
 
-Accuracy
+```python
+model = LogisticRegression(max_iter=200)
+```
 
-Classification report (precision, recall, F1)
+---
 
-Confusion matrix
+## Model Evaluation
 
-Baseline results depend on preprocessing, TF-IDF parameters (max_features, ngram_range) and hyperparameters of Logistic Regression.
+The notebook outputs:
 
-🛠️ Improve / Next steps
+* **Accuracy**
+* **Precision, Recall, F1-score**
+* **Confusion Matrix**
 
-Implement and improve clean_text():
+This helps observe model performance on the held-out test set.
 
-remove URLs, mentions, HTML entities, special chars; expand contractions; optional stemming/lemmatization.
+---
 
-Hyperparameter tuning (GridSearchCV) for TfidfVectorizer and LogisticRegression.
+##  Saving & Loading Model
 
-Try deep learning / transformer models (BERT, DistilBERT) for better context understanding.
+### Save:
 
-Add a Flask / FastAPI wrapper to serve predictions via REST API.
+```python
 
-Add unit tests and CI (GitHub Actions).
+## 🔍 Predicting Sentiment
 
-Add monitoring for model drift when deployed.
+### **Example:**
+
+```python
+sample = ["I love this phone", "I hate this product"]
+X = vectorizer.transform(sample)
+predictions = model.predict(X)
+```
+
+Output:
+
+```
+I love this phone -> Positive
+I hate this product -> Negative
+```
+
+---
+
+## 🚀 Future Improvements
+
+* Implement full `clean_text()` function
+* Use **NLP deep learning models** (LSTM, BiLSTM, GRU)
+* Fine-tune **BERT-based transformers** for State-of-the-art accuracy
+* Add Flask/FastAPI backend for real-time inference
+* Build UI dashboard with Streamlit
+
+---
+

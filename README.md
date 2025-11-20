@@ -21,19 +21,6 @@ This project analyzes the sentiment (Positive / Negative) of tweets using classi
 
 ---
 
-##  Project Architecture
-
-```mermaid
-flowchart LR
-    A[Load Sentiment140 Dataset] --> B[Preprocessing & Cleaning]
-    B --> C[TF-IDF Vectorization]
-    C --> D[Model Training (Logistic Regression)]
-    D --> E[Evaluation]
-    E --> F[Save Model & Vectorizer]
-    F --> G[Prediction on New Tweets]
-```
-
----
 
 ##  Project Structure
 
